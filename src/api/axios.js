@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+// Toggle this to use the live Vercel backend or your local backend
+const useLocalBackend = false;
+
+const LOCAL_API_URL = 'http://127.0.0.1:3000/api';
+const LIVE_API_URL = 'https://club-api-project-git-fresh-start-riheshs-projects.vercel.app/api';
+
 const api = axios.create({
-    baseURL: 'http://127.0.0.1:3000/api',
+    baseURL: useLocalBackend ? LOCAL_API_URL : LIVE_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
