@@ -13,6 +13,7 @@ const AppSettings = () => {
         logo_url: '',
         event_name: '',
         subtitle: '',
+        location: '',
         description: '',
         slider_images: [], // Managed as array
         social_links: { facebook: '', twitter: '', instagram: '', website: '' }
@@ -186,6 +187,9 @@ const AppSettings = () => {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField label="Subtitle / Tagline" fullWidth name="subtitle" value={settings.subtitle || ''} onChange={handleChange} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField label="Location" fullWidth name="location" value={settings.location || ''} onChange={handleChange} helperText="e.g., Los Angeles, CA" />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField label="Description" fullWidth multiline rows={4} name="description" value={settings.description || ''} onChange={handleChange} helperText="About the host or event" />
