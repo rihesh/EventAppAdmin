@@ -38,6 +38,11 @@ const Users = () => {
     const [userToReset, setUserToReset] = useState(null);
     const [newPassword, setNewPassword] = useState('');
 
+    // Dialog states for Commission Rate
+    const [openCommissionDialog, setOpenCommissionDialog] = useState(false);
+    const [userToUpdateCommission, setUserToUpdateCommission] = useState(null);
+    const [newCommissionRate, setNewCommissionRate] = useState('');
+
     const [formData, setFormData] = useState({
         user_name: '',
         password: '',
@@ -140,6 +145,7 @@ const Users = () => {
                             <TableCell>Username</TableCell>
                             <TableCell>Name</TableCell>
                             <TableCell>Email</TableCell>
+                            <TableCell>Commission (%)</TableCell>
                             <TableCell align="center">Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -150,7 +156,15 @@ const Users = () => {
                                 <TableCell>{row.user_name}</TableCell>
                                 <TableCell>{row.name}</TableCell>
                                 <TableCell>{row.email}</TableCell>
+                                <TableCell>{row.commission_rate ? `${row.commission_rate}%` : '10.00%'}</TableCell>
                                 <TableCell align="center">
+                                    <IconButton color="secondary" onClick={() => {
+                                        setUserToUpdateCommission(row);
+                                        setNewCommissionRate(row.commission_rate || '10.00');
+                                        setOpenCommissionDialog(true);
+                                    }} title="Update Commission Rate">
+                                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>%</Typography>
+                                    </IconButton>
                                     <IconButton color="primary" onClick={() => confirmReset(row)} title="Reset Password">
                                         <LockResetIcon />
                                     </IconButton>
@@ -214,6 +228,49 @@ const Users = () => {
                 <DialogActions>
                     <Button onClick={() => setOpenResetDialog(false)}>Cancel</Button>
                     <Button onClick={handleResetPassword} color="primary" variant="contained">Reset</Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Custom Commission Dialog */}
+            <Dialog open={openCommissionDialog} onClose={() => setOpenCommissionDialog(false)}>
+                <DialogTitle>Update Commission Rate</DialogTitle>
+                <DialogContent>
+                    <DialogContentText mb={2}>
+                        Set the platform commission percentage for <strong>{userToUpdateCommission?.name}</strong>. The default rate is 10.00%. Note: Only values between 0 and 100 are permitted.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        label="Commission Rate (%)"
+                        type="number"
+                        inputProps={{ step: "0.01", min: "0", max: "100" }}
+                        fullWidth
+                        value={newCommissionRate}
+                        onChange={(e) => setNewCommissionRate(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenCommissionDialog(false)}>Cancel</Button>
+                    <Button
+                        color="secondary"
+                        variant="contained"
+                        onClick={async () => {
+                            if (!newCommissionRate || newCommissionRate < 0 || newCommissionRate > 100) {
+                                alert('Please input a valid percentage rate between 0 and 100.');
+                                return;
+                            }
+                            try {
+                                await api.put(`/admin/users/${userToUpdateCommission.user_id}/commission`, { commission_rate: newCommissionRate });
+                                setOpenCommissionDialog(false);
+                                fetchUsers();
+                            } catch (error) {
+                                console.error('Failed to update commission rate', error);
+                                alert('Failed to update commission rate.');
+                            }
+                        }}
+                    >
+                        Save Rate
+                    </Button>
                 </DialogActions>
             </Dialog>
         </Box>
