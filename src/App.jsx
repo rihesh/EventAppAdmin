@@ -11,6 +11,7 @@ import ModuleAllotment from './pages/ModuleAllotment';
 import ModuleFields from './pages/ModuleFields';
 import AppSettings from './pages/AppSettings';
 import Users from './pages/Users';
+import TicketConfig from './pages/TicketConfig';
 import Layout from './components/Layout';
 
 // Protected Route Component
@@ -67,6 +68,11 @@ function App() {
           <Route path="/settings" element={
             <ProtectedRoute>
               <AppSettings />
+            </ProtectedRoute>
+          } />
+          <Route path="/tickets/:event_id" element={
+            <ProtectedRoute>
+              <TicketConfig />
             </ProtectedRoute>
           } />
           <Route path="*" element={<Navigate to="/" replace />} />

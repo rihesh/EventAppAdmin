@@ -24,6 +24,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
+import { Tooltip } from '@mui/material';
 import api from '../api/axios';
 import FileUpload from '../components/FileUpload';
 
@@ -289,6 +291,15 @@ const CMS = () => {
                                 <TableCell>{row.title}</TableCell>
                                 <TableCell>{row.sort_order}</TableCell>
                                 <TableCell align="right">
+                                    <Tooltip title="Configure Tickets & Seats">
+                                        <IconButton
+                                            onClick={() => navigate(`/tickets/${row.function_allot_id}`)}
+                                            color="secondary"
+                                            size="small"
+                                        >
+                                            <ConfirmationNumberIcon />
+                                        </IconButton>
+                                    </Tooltip>
                                     <IconButton onClick={() => handleEdit(row)}>
                                         <EditIcon />
                                     </IconButton>
