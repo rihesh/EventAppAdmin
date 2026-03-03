@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SettingsIcon from '@mui/icons-material/Settings';
+import DeleteIcon from '@mui/icons-material/Delete';
 import api from '../api/axios';
 
 const Modules = () => {
@@ -76,6 +77,18 @@ const Modules = () => {
         } catch (error) {
             console.error("Failed to update status", error);
             alert("Failed to update status");
+        }
+    };
+
+    const handleDeleteModule = async (moduleId) => {
+        if (window.confirm("Are you sure you want to delete this module? All associated fields and content will be lost.")) {
+            try {
+                await api.delete(`/admin/modules/${moduleId}`);
+                setModules(prev => prev.filter(m => m.function_id !== moduleId));
+            } catch (error) {
+                console.error("Failed to delete module", error);
+                alert("Failed to delete module");
+            }
         }
     };
 
@@ -141,22 +154,28 @@ const Modules = () => {
                                         <Button
                                             variant="outlined"
                                             size="small"
-                                            onClick={() => navigate(`/cms/${row.function_id}`)}
+                                            onClick={() => navigate(`/cms/${row.function_id}`, { state: { moduleName: row.function_name } })}
                                             sx={{ mr: 1 }}
                                         >
                                             Content
                                         </Button>
                                     )}
                                     {isAdmin && (
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            size="small"
-                                            startIcon={<SettingsIcon />}
-                                            onClick={() => navigate(`/modules/fields/${row.function_id}`)}
-                                        >
-                                            Fields
-                                        </Button>
+                                        <>
+                                            <Button
+                                                variant="contained"
+                                                color="secondary"
+                                                size="small"
+                                                startIcon={<SettingsIcon />}
+                                                onClick={() => navigate(`/modules/fields/${row.function_id}`)}
+                                                sx={{ mr: 1 }}
+                                            >
+                                                Fields
+                                            </Button>
+                                            <IconButton color="error" size="small" onClick={() => handleDeleteModule(row.function_id)}>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </>
                                     )}
                                 </TableCell>
                             </TableRow>

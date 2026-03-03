@@ -13,6 +13,7 @@ import AppSettings from './pages/AppSettings';
 import Users from './pages/Users';
 import TicketConfig from './pages/TicketConfig';
 import Layout from './components/Layout';
+import Notifications from './pages/Notifications';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -73,6 +74,11 @@ function App() {
           <Route path="/tickets/:event_id" element={
             <ProtectedRoute>
               <TicketConfig />
+            </ProtectedRoute>
+          } />
+          <Route path="/notifications" element={
+            <ProtectedRoute>
+              <Notifications />
             </ProtectedRoute>
           } />
           <Route path="*" element={<Navigate to="/" replace />} />

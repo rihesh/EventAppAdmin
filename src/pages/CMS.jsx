@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
     Box,
     Typography,
@@ -32,6 +32,9 @@ import FileUpload from '../components/FileUpload';
 const CMS = () => {
     const { function_id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const isEventModule = location.state?.moduleName?.toLowerCase() === 'events' || location.state?.moduleName?.toLowerCase() === 'event';
 
     const [loading, setLoading] = useState(true);
     const [structure, setStructure] = useState([]);
@@ -291,15 +294,17 @@ const CMS = () => {
                                 <TableCell>{row.title}</TableCell>
                                 <TableCell>{row.sort_order}</TableCell>
                                 <TableCell align="right">
-                                    <Tooltip title="Configure Tickets & Seats">
-                                        <IconButton
-                                            onClick={() => navigate(`/tickets/${row.function_allot_id}`)}
-                                            color="secondary"
-                                            size="small"
-                                        >
-                                            <ConfirmationNumberIcon />
-                                        </IconButton>
-                                    </Tooltip>
+                                    {isEventModule && (
+                                        <Tooltip title="Configure Tickets & Seats">
+                                            <IconButton
+                                                onClick={() => navigate(`/tickets/${row.function_allot_id}`)}
+                                                color="secondary"
+                                                size="small"
+                                            >
+                                                <ConfirmationNumberIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    )}
                                     <IconButton onClick={() => handleEdit(row)}>
                                         <EditIcon />
                                     </IconButton>

@@ -6,6 +6,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import SettingsIcon from '@mui/icons-material/Settings';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const drawerWidth = 240;
@@ -23,6 +24,7 @@ export default function Layout({ children }) {
         ...(isSuperAdmin ? [{ text: 'Module Allotment', icon: <AssignmentIndIcon />, path: '/allotment' }] : []),
         ...(isSuperAdmin ? [{ text: 'Users', icon: <PeopleIcon />, path: '/users' }] : []),
         ...(!isSuperAdmin ? [{ text: 'App Settings', icon: <SettingsIcon />, path: '/settings' }] : []),
+        { text: 'Notifications', icon: <NotificationsIcon />, path: '/notifications' }
     ];
 
     return (
