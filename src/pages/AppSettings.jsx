@@ -49,8 +49,12 @@ const AppSettings = () => {
                 if (Array.isArray(fetched.slider_images)) {
                     sliderArr = fetched.slider_images;
                 } else if (typeof fetched.slider_images === 'string' && fetched.slider_images.trim() !== '') {
-                    // Try to parse if it was saved as string previously
-                    sliderArr = fetched.slider_images.split(',').map(s => s.trim()).filter(s => s);
+                    try {
+                        sliderArr = JSON.parse(fetched.slider_images);
+                    } catch (e) {
+                        // Fallback to split if it really was comma separated
+                        sliderArr = fetched.slider_images.split(',').map(s => s.trim()).filter(s => s);
+                    }
                 }
 
                 // Ensure social_links is object

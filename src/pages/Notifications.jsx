@@ -34,12 +34,12 @@ const Notifications = () => {
         }
 
         try {
-            const response = await api.post('/admin/notifications/send', {
+            const response = await api.post('/notifications/send', {
                 title,
                 body
             });
-            if (response.data.status) {
-                setSuccess('Notifications sent successfully!');
+            if (response.data.success) {
+                setSuccess(`Notification sent to ${response.data.sent || 'all'} device(s)!`);
                 setTitle('');
                 setBody('');
             } else {
