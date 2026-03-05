@@ -14,6 +14,7 @@ import api from '../api/axios';
 const Notifications = () => {
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
+    const [appId, setAppId] = useState('');
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
@@ -36,7 +37,8 @@ const Notifications = () => {
         try {
             const response = await api.post('/notifications/send', {
                 title,
-                body
+                body,
+                app_id: appId.trim() || undefined
             });
             if (response.data.success) {
                 setSuccess(`Notification sent to ${response.data.sent || 'all'} device(s)!`);
@@ -71,6 +73,17 @@ const Notifications = () => {
                 {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
                 <Box component="form" onSubmit={handleSend} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <TextField
+                        label="App ID (Optional)"
+                        variant="outlined"
+                        fullWidth
+                        value={appId}
+                        onChange={(e) => setAppId(e.target.value)}
+                        placeholder="e.g. club-mobile-app"
+                        helperText="Leave empty to send to all registered apps, or enter an App ID to target a specific app."
+                        disabled={loading}
+                    />
+
                     <TextField
                         label="Notification Title"
                         variant="outlined"
