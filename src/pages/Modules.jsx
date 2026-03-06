@@ -14,9 +14,12 @@ import {
     CircularProgress,
     Button,
     IconButton,
-    Switch
+    Switch,
+    Radio,
+    TextField
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import SaveIcon from '@mui/icons-material/Save';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 import api from '../api/axios';
@@ -80,6 +83,39 @@ const Modules = () => {
         }
     };
 
+    const handleHighlightModule = async (moduleId) => {
+        try {
+            await api.put('/admin/modules/highlight', {
+                function_id: moduleId
+            });
+            // Update local state
+            setModules(prev => prev.map(m => ({
+                ...m,
+                is_highlighted: m.function_id === moduleId ? '1' : '0'
+            })));
+        } catch (error) {
+            console.error("Failed to highlight module", error);
+            alert("Failed to update wizard module");
+        }
+    };
+
+    const handlePriorityChange = (moduleId, val) => {
+        setModules(prev => prev.map(m => m.function_id === moduleId ? { ...m, function_order: val } : m));
+    };
+
+    const savePriorities = async () => {
+        try {
+            const priorities = modules.map(m => ({ function_id: m.function_id, function_order: m.function_order || 0 }));
+            await api.put('/admin/modules/priority', { priorities });
+            alert("Priorities saved successfully");
+            // Optional: Re-sort local state
+            setModules(prev => [...prev].sort((a, b) => (parseInt(a.function_order) || 0) - (parseInt(b.function_order) || 0)));
+        } catch (error) {
+            console.error("Failed to save priorities", error);
+            alert("Failed to save priorities");
+        }
+    };
+
     const handleDeleteModule = async (moduleId) => {
         if (window.confirm("Are you sure you want to delete this module? All associated fields and content will be lost.")) {
             try {
@@ -103,13 +139,23 @@ const Modules = () => {
                     Events / Modules
                 </Typography>
                 {isAdmin && (
-                    <Button
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={() => navigate('/modules/add')}
-                    >
-                        Add New Module
-                    </Button>
+                    <Box>
+                        <Button
+                            variant="outlined"
+                            startIcon={<SaveIcon />}
+                            onClick={savePriorities}
+                            sx={{ mr: 2 }}
+                        >
+                            Save Priorities
+                        </Button>
+                        <Button
+                            variant="contained"
+                            startIcon={<AddIcon />}
+                            onClick={() => navigate('/modules/add')}
+                        >
+                            Add New Module
+                        </Button>
+                    </Box>
                 )}
             </Box>
 
@@ -118,9 +164,11 @@ const Modules = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell>ID</TableCell>
+                            {isAdmin && <TableCell align="center">Priority</TableCell>}
                             <TableCell>Name</TableCell>
                             <TableCell>Org Name</TableCell>
                             <TableCell>Category</TableCell>
+                            {isAdmin && <TableCell>Wizard/Highlight</TableCell>}
                             <TableCell>Status</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
@@ -134,9 +182,34 @@ const Modules = () => {
                                 <TableCell component="th" scope="row">
                                     {row.function_id}
                                 </TableCell>
+                                {isAdmin && (
+                                    <TableCell align="center">
+                                        <TextField
+                                            type="number"
+                                            size="small"
+                                            variant="outlined"
+                                            value={row.function_order || 0}
+                                            onChange={(e) => handlePriorityChange(row.function_id, e.target.value)}
+                                            style={{ width: '70px' }}
+                                        />
+                                    </TableCell>
+                                )}
                                 <TableCell>{row.function_name || '(No Name)'}</TableCell>
                                 <TableCell>{row.function_org_name}</TableCell>
                                 <TableCell>{row.category === '1' ? 'General' : 'Special'}</TableCell>
+                                {isAdmin && (
+                                    <TableCell>
+                                        <Box display="flex" alignItems="center">
+                                            <Radio
+                                                checked={row.is_highlighted === '1'}
+                                                onChange={() => handleHighlightModule(row.function_id)}
+                                                color="primary"
+                                                name="highlight-radio-buttons"
+                                            />
+                                            <Typography variant="caption" color="textSecondary">Top Card</Typography>
+                                        </Box>
+                                    </TableCell>
+                                )}
                                 <TableCell>
                                     <Box display="flex" alignItems="center">
                                         <Switch
