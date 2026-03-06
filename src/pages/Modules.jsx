@@ -37,8 +37,8 @@ const Modules = () => {
         // It does NOT return user_type currently, so we need to infer or add it to login response.
         // For now, let's look at how we implemented it.
         // Wait, AdminController.js login DOES NOT return user_type relative to the 'admin' table, but 'users' table has 'user_type'.
-
-        const superAdmin = adminData.user_type === 1 || adminData.admin_id === 1;
+        // Fix: Use loose equality to support string OR number parsed from localStorage JSON
+        const superAdmin = String(adminData.user_type) === '1' || String(adminData.admin_id) === '1';
         setIsAdmin(superAdmin);
 
         const adminId = adminData.admin_id || (adminData.user && adminData.user.user_id);
