@@ -85,7 +85,11 @@ const Modules = () => {
 
     const handleHighlightModule = async (moduleId) => {
         try {
+            const adminData = JSON.parse(localStorage.getItem('admin') || '{}');
+            const adminId = adminData.admin_id || (adminData.user && adminData.user.user_id);
+
             await api.put('/admin/modules/highlight', {
+                admin_id: adminId,
                 function_id: moduleId
             });
             // Update local state
@@ -105,8 +109,11 @@ const Modules = () => {
 
     const savePriorities = async () => {
         try {
+            const adminData = JSON.parse(localStorage.getItem('admin') || '{}');
+            const adminId = adminData.admin_id || (adminData.user && adminData.user.user_id);
+
             const priorities = modules.map(m => ({ function_id: m.function_id, function_order: m.function_order || 0 }));
-            await api.put('/admin/modules/priority', { priorities });
+            await api.put('/admin/modules/priority', { admin_id: adminId, priorities });
             alert("Priorities saved successfully");
             // Optional: Re-sort local state
             setModules(prev => [...prev].sort((a, b) => (parseInt(a.function_order) || 0) - (parseInt(b.function_order) || 0)));
@@ -138,7 +145,8 @@ const Modules = () => {
                 <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                     Events / Modules
                 </Typography>
-                {isAdmin && (
+                {/* App Admin sees Priority controls */}
+                {!isAdmin && (
                     <Box>
                         <Button
                             variant="outlined"
@@ -148,6 +156,11 @@ const Modules = () => {
                         >
                             Save Priorities
                         </Button>
+                    </Box>
+                )}
+                {/* Super Admin sees Add New Module */}
+                {isAdmin && (
+                    <Box>
                         <Button
                             variant="contained"
                             startIcon={<AddIcon />}
@@ -164,11 +177,11 @@ const Modules = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell>ID</TableCell>
-                            {isAdmin && <TableCell align="center">Priority</TableCell>}
+                            {!isAdmin && <TableCell align="center">Priority</TableCell>}
                             <TableCell>Name</TableCell>
                             <TableCell>Org Name</TableCell>
                             <TableCell>Category</TableCell>
-                            {isAdmin && <TableCell>Wizard/Highlight</TableCell>}
+                            {!isAdmin && <TableCell>Wizard/Highlight</TableCell>}
                             <TableCell>Status</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
@@ -182,7 +195,7 @@ const Modules = () => {
                                 <TableCell component="th" scope="row">
                                     {row.function_id}
                                 </TableCell>
-                                {isAdmin && (
+                                {!isAdmin && (
                                     <TableCell align="center">
                                         <TextField
                                             type="number"
@@ -197,7 +210,7 @@ const Modules = () => {
                                 <TableCell>{row.function_name || '(No Name)'}</TableCell>
                                 <TableCell>{row.function_org_name}</TableCell>
                                 <TableCell>{row.category === '1' ? 'General' : 'Special'}</TableCell>
-                                {isAdmin && (
+                                {!isAdmin && (
                                     <TableCell>
                                         <Box display="flex" alignItems="center">
                                             <Radio
@@ -256,7 +269,7 @@ const Modules = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-        </Box>
+        </Box >
     );
 };
 
