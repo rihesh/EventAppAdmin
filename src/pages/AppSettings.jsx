@@ -17,7 +17,7 @@ const AppSettings = () => {
         home_layout: 'classic',
         description: '',
         slider_images: [], // Managed as array
-        social_links: { facebook: '', twitter: '', instagram: '', website: '' }
+        social_links: { facebook: '', twitter: '', instagram: '', website: '', youtube: '' }
     });
     const [loading, setLoading] = useState(false);
     const [stripeStatus, setStripeStatus] = useState({ loading: true, connected: false });
@@ -58,7 +58,7 @@ const AppSettings = () => {
                 }
 
                 // Ensure social_links is object
-                let socialObj = fetched.social_links || { facebook: '', twitter: '', instagram: '', website: '' };
+                let socialObj = fetched.social_links || { facebook: '', twitter: '', instagram: '', website: '', youtube: '' };
                 if (typeof socialObj === 'string') {
                     try { socialObj = JSON.parse(socialObj); } catch (e) { }
                 }
@@ -249,6 +249,9 @@ const AppSettings = () => {
                             </Grid>
                             <Grid item xs={6}>
                                 <TextField label="Instagram URL" fullWidth name="instagram" value={settings.social_links?.instagram || ''} onChange={handleSocialChange} />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField label="YouTube URL" fullWidth name="youtube" value={settings.social_links?.youtube || ''} onChange={handleSocialChange} />
                             </Grid>
                             <Grid item xs={6}>
                                 <TextField label="Website URL" fullWidth name="website" value={settings.social_links?.website || ''} onChange={handleSocialChange} />
